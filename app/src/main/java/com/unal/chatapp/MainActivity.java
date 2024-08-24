@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        Animation animacion = AnimationUtils.loadAnimation(this,R.anim.animacion_personalizada);
-        animacion.setAnimationListener(new Animation.AnimationListener() {
+        Animation animation = AnimationUtils.loadAnimation(this,R.anim.animacion_personalizada);
+        animation.setAnimationListener(new Animation.AnimationListener() {
 
 
             @Override
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         View vistaAnimada = findViewById(R.id.vista_animada);
-        vistaAnimada.startAnimation(animacion);
+        vistaAnimada.startAnimation(animation);
 
         }
     }
