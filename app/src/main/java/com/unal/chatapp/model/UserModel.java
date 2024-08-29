@@ -16,6 +16,7 @@ public class UserModel {
         this.name = name;
     }
 
+
     public String getUserId() {
         return userId;
     }
@@ -24,7 +25,7 @@ public class UserModel {
         this.userId = userId;
     }
 
-    public String email() {
+    public String getEmail() {
         return email;
     }
 
@@ -32,7 +33,7 @@ public class UserModel {
         this.email = email;
     }
 
-    public String name() {
+    public String getName() {
         return name;
     }
 
@@ -40,7 +41,7 @@ public class UserModel {
         this.name = name;
     }
 
-    public List<String> messageIds() {
+    public List<String> getMessageIds() {
         return messageIds;
     }
 

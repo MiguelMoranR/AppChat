@@ -67,7 +67,9 @@ public class Chat extends AppCompatActivity implements UserListContract, ChatCon
         messageEditText = findViewById(R.id.messageEditText);
         sendButton = findViewById(R.id.sendButton);
 
-        presenter = new UserListPresenter(this);
+        presenter= new UserListPresenterImpl(this) {
+        chatPresenter = new ChatPresenterImpl(this);
+        };
 
 
     }
