@@ -12,13 +12,16 @@ import com.unal.chatapp.model.UserModel;
 import com.unal.chatapp.view.ChatContract;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class ChatPresenterImpl implements ChatPresenter{
     private ChatContract view;
     private UserModel user1;
     private UserModel user2;
     private String conversationId;
+
     public ChatPresenterImpl(ChatContract view){
         this.view = view;
     }
@@ -28,19 +31,20 @@ public class ChatPresenterImpl implements ChatPresenter{
         this.user1 = user1;
         this.user2 = user2;
         if(user1.getEmail().compareTo(user2.getEmail()) < 0){
-           conversationId = user1.getEmail()+"_"+user2.getEmail();
+           conversationId = user1.getEmail()+"_" + user2.getEmail();
         }else {
-            conversationId = user2.getEmail()+"_"+user2.getEmail();
+            conversationId = user2.getEmail()+"_" + user2.getEmail();
         }
         FirebaseFirestore.getInstance().collection("conversations")
                 .document(conversationId)
                 .collection("messages")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .addSnapshotListener((queryDocumentSnapshots,e)->{
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
                     if(e != null){
-                        Log.e(TAG, "Error al cargar las conversaciones: ",e);
+                        Log.e(TAG, "Error al cargar las conversaciones: ", e);
                         return;
                     }
+
                     List<MessageModel> conversationMessages = new ArrayList<>();
                     if(queryDocumentSnapshots != null){
                         for (QueryDocumentSnapshot document: queryDocumentSnapshots){
@@ -48,6 +52,7 @@ public class ChatPresenterImpl implements ChatPresenter{
                             conversationMessages.add(message);
                         }
                     }
+
                     if (view != null){
                        view.showConversations(conversationMessages);
                     }
@@ -57,7 +62,7 @@ public class ChatPresenterImpl implements ChatPresenter{
     @Override
     public void sendMessage(String messageText, UserModel user1, UserModel user2) {
         if(user1 != null && user2 != null){
-            String conversationId = generateConversationId(user1.getEmail(),user2.getEmail());
+            String conversationId = generateConversationId(user1.getEmail(), user2.getEmail());
             CollectionReference messageRef = FirebaseFirestore.getInstance()
                     .collection("conversations")
                     .document(conversationId)
@@ -65,15 +70,63 @@ public class ChatPresenterImpl implements ChatPresenter{
 
             MessageModel message = createMessageModel(user1,messageText);
 
+            messageRef.add(message)
+                    .addOnSuccessListener(documentReference -> {
+                        view.showMessageSentConfirmation();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG,"Error sending message: " + e.getMessage());
+                    } );
+            updateUserWhithMessageId(conversationId, message.getMessageId(), user1, user2);
+            updateUserWhithMessageId(conversationId, message.getMessageId(), user2, user1);
+
+        }else{
+            Log.e(TAG,"<User1 or User2 is null");
         }
     }
 
-    private MessageModel createMessageModel(UserModel user1, String messageText) {
-
-
-    }
-
     private String generateConversationId(String email1, String email2) {
-        return email1.compareTo(email2) < 0 ? email1 + "_" + email2: email2 + "_" + email1;
+        return email1.compareTo(email2) < 0 ? email1 + "_" + email2 : email2 + "_" + email1;
     }
+
+    private MessageModel createMessageModel(UserModel user, String messageText) {
+        String messageId = UUID.randomUUID().toString();
+        String senderId = user.getUserId();
+        String senderName = user.getName();
+        String senderEmail = user.getEmail();
+        Date timestamp = new Date(); // O utiliza FieldValue.serverTimestamp() si prefieres que Firestore establezca la marca de tiempo
+        return new MessageModel(messageId, messageText, senderId, senderName, timestamp, senderEmail);
+    }
+
+    private void updateUserWhithMessageId(String conversationId, String messageId, UserModel user, UserModel otherUser) {
+        FirebaseFirestore.getInstance().collection("usuarios")
+                .whereEqualTo("email",user.getEmail())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        UserModel userFromFirestore = documentSnapshot.toObject(UserModel.class);
+                        if (userFromFirestore != null) {
+                            if (userFromFirestore.getUserId() != null) {
+                                updateUserData(userFromFirestore.getUserId(), conversationId, messageId);
+                            } else {
+                                Log.e(TAG, "userId is null for user: " + userFromFirestore.getEmail());
+                            }
+                        } else {
+                            Log.e(TAG, "User not found in usuarios collection");
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error getting user from usuarios collection: " + e.getMessage());
+                });
+    }
+
+    private void updateUserData(String userId, String conversationId, String messageId) {
+        FirebaseFirestore.getInstance().collection("usuarios").document(userId)
+                .update("messageIds." + conversationId, messageId)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "MessageId added to user"))
+                .addOnFailureListener(e -> Log.e(TAG, "Error updating document: " + e.getMessage()));
+    }
+
 }
+

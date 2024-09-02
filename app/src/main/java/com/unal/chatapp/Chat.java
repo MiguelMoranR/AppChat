@@ -1,22 +1,20 @@
 package com.unal.chatapp;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.unal.chatapp.Presenter.ChatPresenter;
+import com.unal.chatapp.Presenter.ChatPresenterImpl;
 import com.unal.chatapp.Presenter.UserListPresenter;
 import com.unal.chatapp.Presenter.UserListPresenterImpl;
 import com.unal.chatapp.model.MessageModel;
@@ -67,11 +65,39 @@ public class Chat extends AppCompatActivity implements UserListContract, ChatCon
         messageEditText = findViewById(R.id.messageEditText);
         sendButton = findViewById(R.id.sendButton);
 
-        presenter= new UserListPresenterImpl(this) {
+        presenter= new UserListPresenterImpl(this);
         chatPresenter = new ChatPresenterImpl(this);
-        };
 
+        presenter.loadUsers();
 
+        searchUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchUser();
+
+            }
+        });
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //sendMessage();
+            }
+        });
+    }
+
+    private void searchUser() {
+        String emailToSearch = searchEmailEditText.getText().toString().trim();
+        List<UserModel> foundUser = new ArrayList<>();
+
+        for(UserModel user: usersList){
+            if(user.getEmail().equalsIgnoreCase(emailToSearch)){
+                foundUser.add(user);
+            }
+        }
+        if(!foundUser.isEmpty()){
+            //UserAdapter;
+        }
     }
 
     @Override

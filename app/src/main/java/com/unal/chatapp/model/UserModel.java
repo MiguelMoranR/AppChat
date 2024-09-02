@@ -8,7 +8,8 @@ public class UserModel {
     private String name;
     private List<String> messageIds;
 
-    public UserModel(){}
+    public UserModel() {
+    }
 
     public UserModel(String userId, String email, String name) {
         this.userId = userId;
@@ -16,6 +17,13 @@ public class UserModel {
         this.name = name;
     }
 
+    public List<String> getMessageIds() {
+        return messageIds;
+    }
+
+    public void setMessageIds(List<String> messageIds) {
+        this.messageIds = messageIds;
+    }
 
     public String getUserId() {
         return userId;
@@ -39,13 +47,5 @@ public class UserModel {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<String> getMessageIds() {
-        return messageIds;
-    }
-
-    public void setMessageIds(List<String> messageIds) {
-        this.messageIds = messageIds;
     }
 }

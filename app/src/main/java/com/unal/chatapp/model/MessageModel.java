@@ -3,6 +3,7 @@ package com.unal.chatapp.model;
 import java.util.Date;
 
 public class MessageModel {
+    public Object getMessageId;
     private String messageId;
     private String messageText;
     private String senderId;
@@ -76,5 +77,8 @@ public class MessageModel {
 
     public void setSenderEmail(String senderEmail) {
         this.senderEmail = senderEmail;
+    }
+
+    public String getMessageId() {return messageId;
     }
 }
