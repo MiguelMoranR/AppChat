@@ -15,7 +15,9 @@ import com.unal.chatapp.model.RegistroModel;
 import com.unal.chatapp.view.RegistroContract;
 
 public class Registro extends AppCompatActivity implements RegistroContract.View{
-    private EditText editTextName,editTextEmail,editTextPassword;
+    private EditText editTextName;
+    private EditText editTextEmail;
+    private EditText editTextPassword;
     private Button btnRegister;
     private TextView textViewLogin;
     private RegistroPresenter presenter;
@@ -37,9 +39,9 @@ public class Registro extends AppCompatActivity implements RegistroContract.View
             @Override
             public void onClick(View view) {
                 presenter.registerUser();
-
             }
         });
+
         textViewLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,8 +50,8 @@ public class Registro extends AppCompatActivity implements RegistroContract.View
         });
     }
 
-    public void showToast(String messege) {
-        Toast.makeText(this,messege, Toast.LENGTH_SHORT).show();
+    public void showToast(String message) {
+        Toast.makeText(this,message, Toast.LENGTH_SHORT).show();
 
     }
     public void clearInputFields(){

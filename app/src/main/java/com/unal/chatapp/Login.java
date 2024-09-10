@@ -21,7 +21,8 @@ import com.unal.chatapp.view.LoginContract;
 
 public class Login extends AppCompatActivity implements LoginContract.View {
 
-    private EditText editTextEmail, editTextPassword;
+    private EditText editTextEmail;
+    private EditText editTextPassword;
     private Button btnLogin;
     private TextView registerText;
     private LoginPresenter presenter;
