@@ -33,8 +33,8 @@ public class Login extends AppCompatActivity implements LoginContract.View {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        editTextEmail = findViewById(R.id.emailEditText);
-        editTextPassword = findViewById(R.id.passwordEditText);
+        editTextEmail = findViewById(R.id.emailEditTextLogin);
+        editTextPassword = findViewById(R.id.passwordEditTextLogin);
         btnLogin = findViewById(R.id.loginButton);
         registerText = findViewById(R.id.registerText);
 

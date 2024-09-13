@@ -18,9 +18,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.unal.chatapp.R;
+import com.unal.chatapp.model.MessageModel;
+
 public class MessageAdapter extends ArrayAdapter<MessageModel> {
     private Context mContext;
     private List<MessageModel> mMessages;
+
     public MessageAdapter(Context context,List<MessageModel> messages){
         super(context,0,messages);
         mContext = context;

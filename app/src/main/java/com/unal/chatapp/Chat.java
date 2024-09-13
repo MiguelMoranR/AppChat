@@ -4,7 +4,6 @@ import static android.app.ProgressDialog.show;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -97,82 +96,110 @@ public class Chat extends AppCompatActivity implements UserListContract, ChatCon
         });
     }
 
-    private void sendMessage() {
-        String message = messageEditText.getText().toString().trim();
-        if(message.isEmpty()){
-            chatPresenter.sendMessage(message,user1,user2);
-            messageEditText.setText("");
-        }else {
-           Toast.makeText(Chat.this,"Por favor ingresa un mensaje",Toast.LENGTH_SHORT).show();
-
-        }
-    }
-
-    private void searchUser() {
-        String emailToSearch = searchEmailEditText.getText().toString().trim();
-        List<UserModel> foundUser = new ArrayList<>();
-
-        for(UserModel user: usersList){
-            if(user.getEmail().equalsIgnoreCase(emailToSearch)){
-                foundUser.add(user);
-            }
-        }
-        if(!foundUser.isEmpty()){
-            UserAdapter.ChatButtonClickListener listener = new UserAdapter.ChatButtonClickListener() {
-                @Override
-                public void onChatButtonClick(UserModel user) {
-                    handleChatButtonClick(user);
-                    
-                }
-            };
-
-            UserAdapter adapter = new UserAdapter(this,foundUser,listener);
-            listView.setAdapter(adapter);
-        }else {
-            Toast.makeText(this,"No encontrado",Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private void handleChatButtonClick(UserModel user) {
-        if(currentUser !=null){
-            user1.setUserId(currentUser.getUid());
-            user1.setEmail(currentUser.getEmail());
-            user1.setName(currentUser.getDisplayName());
-            user2 = user;
-            chatPresenter.loadConversations(user1,user2);
-            Toast.makeText(Chat.this,  "Ok, alla vamos!",Toast.LENGTH_SHORT).show();
-            showChatInterface();
-
-        }else {
-            Toast.makeText(this,"No encontrado",Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void showChatInterface() {
+    public void showChatInterface(){
         textViewMiddleTitle.setVisibility(View.VISIBLE);
         listViewChatUsuarios.setVisibility(View.VISIBLE);
         messageInputLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void displayUser(List<UserModel> users) {
+    public void displayUsers(List<UserModel> users) {
+        // Guardar la lista de usuarios cargados
         usersList = users;
     }
 
     @Override
+    public void displayUser(List<UserModel> users) {
+
+    }
+
+    @Override
     public void showError(String message) {
+        // Mostrar un mensaje de error
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Método para buscar usuarios por correo electrónico.
+     */
+    private void searchUser() {
+        String emailToSearch = searchEmailEditText.getText().toString().trim();
+        List<UserModel> foundUsers = new ArrayList<>();
+
+        // Buscar usuarios cuyo correo coincida con el correo ingresado
+        for (UserModel user : usersList) {
+            if (user.getEmail().equalsIgnoreCase(emailToSearch)) {
+                foundUsers.add(user);
+            }
+        }
+
+        if (!foundUsers.isEmpty()) {
+            // Listener para el botón de chatear con el usuario encontrado
+            UserAdapter.ChatButtonClickListener listener = new UserAdapter.ChatButtonClickListener() {
+                @Override
+                public void onChatButtonClick(UserModel user) {
+                    handleChatButtonClick(user);
+                }
+            };
+
+            // Si se encuentran usuarios, mostrarlos en el ListView
+            UserAdapter adapter = new UserAdapter(this, foundUsers, listener);
+            listView.setAdapter(adapter);
+        } else {
+            // Si no se encuentran usuarios, mostrar un mensaje "no encontrado"
+            Toast.makeText(this, "No encontrado", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Método para manejar el clic en el botón de chat.
+     * @param user El usuario con el que se desea chatear.
+     */
+    private void handleChatButtonClick(UserModel user) {
+        if (currentUser != null) {
+            // Obtener información del usuario actual
+            user1.setUserId(currentUser.getUid());
+            user1.setEmail(currentUser.getEmail());
+            user1.setName(currentUser.getDisplayName());
+            user2 = user;
+            chatPresenter.loadConversations(user1, user2);
+            Toast.makeText(Chat.this, "Ok, allá vamos!", Toast.LENGTH_SHORT).show();
+            // Mostrar la interfaz de chat
+            showChatInterface();
+        } else {
+            // El usuario no está autenticado, realizar alguna acción como mostrar un mensaje de error
+        }
+    }
+
+    /**
+     * Método para enviar un mensaje.
+     */
+    private void sendMessage() {
+        // Obtener el mensaje del campo de texto
+        String message = messageEditText.getText().toString().trim();
+
+        // Verificar si el mensaje no está vacío
+        if (!message.isEmpty()) {
+            // Llamar al método para enviar el mensaje
+            chatPresenter.sendMessage(message, user1, user2);
+            // Limpiar el campo de texto después de enviar el mensaje
+            messageEditText.setText("");
+        } else {
+            // Mostrar un mensaje de error si el campo de texto está vacío
+            Toast.makeText(Chat.this, "Por favor ingresa un mensaje", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void showConversations(List<MessageModel> conversations) {
+        // Usar un adaptador personalizado para mostrar las conversaciones en el ListView
         MessageAdapter adapter = new MessageAdapter(this, conversations);
         conversationsListView.setAdapter(adapter);
     }
 
     @Override
     public void showMessageSentConfirmation() {
+        // Mostrar un mensaje o realizar alguna acción al enviar el mensaje
         Toast.makeText(this, "Mensaje enviado correctamente", Toast.LENGTH_SHORT).show();
     }
 }

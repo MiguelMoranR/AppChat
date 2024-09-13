@@ -22,14 +22,14 @@ public class UserListPresenterImpl implements UserListPresenter{
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     List<UserModel> userList = new ArrayList<>();
-                    for(DocumentSnapshot document: queryDocumentSnapshots.getDocuments()) {
-                        UserModel user= document.toObject(UserModel.class);
+                    for(DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                        UserModel user = document.toObject(UserModel.class);
                         userList.add(user);
                     }
                     view.displayUser(userList);
                 })
                 .addOnFailureListener(e -> {
-                    view.showError("Error al cargar los usuarios: "+ e.getMessage());
+                    view.showError("Error al cargar los usuarios: " + e.getMessage());
                 });
     }
 }

@@ -22,7 +22,9 @@ public class LoginPresenter {
 
             @Override
             public void onSuccess(FirebaseUser user) {
-              view.showToast("Inicio de sesión exitoso");
+
+                view.showToast("Inicio de sesión exitoso");
+                view.navigateToHome();
             }
 
             @Override

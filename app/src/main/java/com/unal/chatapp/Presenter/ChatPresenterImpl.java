@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class ChatPresenterImpl implements ChatPresenter{
+public class ChatPresenterImpl implements ChatPresenter {
     private ChatContract view;
     private UserModel user1;
     private UserModel user2;
@@ -31,9 +31,9 @@ public class ChatPresenterImpl implements ChatPresenter{
         this.user1 = user1;
         this.user2 = user2;
         if(user1.getEmail().compareTo(user2.getEmail()) < 0){
-           conversationId = user1.getEmail()+"_" + user2.getEmail();
+           conversationId = user1.getEmail() + "_" + user2.getEmail();
         }else {
-            conversationId = user2.getEmail()+"_" + user2.getEmail();
+            conversationId = user2.getEmail() + "_" + user2.getEmail();
         }
         FirebaseFirestore.getInstance().collection("conversations")
                 .document(conversationId)
