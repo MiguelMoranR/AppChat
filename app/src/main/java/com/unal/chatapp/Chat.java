@@ -1,9 +1,11 @@
 package com.unal.chatapp;
 
-import static android.app.ProgressDialog.show;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -11,11 +13,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.unal.chatapp.Presenter.ChatPresenter;
 import com.unal.chatapp.Presenter.ChatPresenterImpl;
@@ -27,11 +29,12 @@ import com.unal.chatapp.model.MessageModel;
 import com.unal.chatapp.model.UserModel;
 import com.unal.chatapp.view.ChatContract;
 import com.unal.chatapp.view.UserListContract;
-
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Esta clase representa la actividad de chat de la aplicación.
+ */
 public class Chat extends AppCompatActivity implements UserListContract, ChatContract {
+
+    // Variables de la interfaz de usuario
     private ListView conversationsListView;
     private EditText messageEditText;
     private Button sendButton;
@@ -42,32 +45,38 @@ public class Chat extends AppCompatActivity implements UserListContract, ChatCon
     private CardView listViewChatUsuarios;
     private LinearLayout messageInputLayout;
 
+    // Variables de Firebase
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
+    // Variables de presentador
     private ChatPresenter chatPresenter;
     private UserListPresenter presenter;
 
+    // Lista de usuarios y modelos de usuario
     private List<UserModel> usersList = new ArrayList<>();
     private UserModel user1;
     private UserModel user2;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        // Inicialización de Firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
+        // Inicialización de modelos de usuario
         user1 = new UserModel();
         user2 = new UserModel();
 
+        // Configuración de la interfaz de búsqueda de usuarios
         listView = findViewById(R.id.usersListView);
         searchEmailEditText = findViewById(R.id.searchEmailEditText);
         searchUserButton = findViewById(R.id.searchUserButton);
 
+        // Configuración de la interfaz de chat
         textViewMiddleTitle = findViewById(R.id.textViewMiddleTitle);
         listViewChatUsuarios = findViewById(R.id.listViewChatUsuarios);
         messageInputLayout = findViewById(R.id.messageInputLayout);
@@ -75,19 +84,22 @@ public class Chat extends AppCompatActivity implements UserListContract, ChatCon
         messageEditText = findViewById(R.id.messageEditText);
         sendButton = findViewById(R.id.sendButton);
 
-        presenter= new UserListPresenterImpl(this);
+        // Inicialización de presentadores
+        presenter = new UserListPresenterImpl(this);
         chatPresenter = new ChatPresenterImpl(this);
 
+        // Cargar usuarios
         presenter.loadUsers();
 
+        // Configuración del botón de búsqueda de usuarios
         searchUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchUser();
-
             }
         });
 
+        // Configuración del OnClickListener para el botón de enviar mensaje
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +108,9 @@ public class Chat extends AppCompatActivity implements UserListContract, ChatCon
         });
     }
 
+    /**
+     * Método para mostrar la interfaz de chat.
+     */
     public void showChatInterface(){
         textViewMiddleTitle.setVisibility(View.VISIBLE);
         listViewChatUsuarios.setVisibility(View.VISIBLE);
